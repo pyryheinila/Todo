@@ -1,0 +1,25 @@
+@import "./general.css";
+.header {
+    color: var(--text-color);
+    background-color: var(--background);
+    border-bottom: 2px solid white;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    padding: 0px 30px;
+}
+
+.header-name {
+    color: var(--text-color);
+    font-size: 40px;
+    font-family: 'franklin Gothic Medium';
+    padding: 5px 15px;
+    border-radius: 5px;
+}
+
+.header-name:hover {
+    background-color: rgb(71, 66, 66);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
