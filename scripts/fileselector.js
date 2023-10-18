@@ -4,9 +4,9 @@ import {generateHTML} from "./todo.js";
 
 let subjects = JSON.parse(localStorage.getItem('subjects')) || []
 
-
 generateSelectorHTML();
 export function generateSelectorHTML() {
+	let editClicked = false;
 	let selectorHTML = '';
 	subjects.forEach(subject => {
 		const subjectName = subject.name[0].toUpperCase() + subject.name.slice(1);
@@ -27,6 +27,8 @@ export function generateSelectorHTML() {
 
 	document.querySelectorAll('.todo-edit-button').forEach(element => {
 		element.addEventListener("click", () => {
+			editClicked = true;
+			
 			document.querySelector('.todo-list-container').innerHTML = `
 			<h1 class="todo-list-text">Edit text:</h1>
 			<button class="delete-button">X</button>
@@ -123,12 +125,17 @@ export function generateSelectorHTML() {
 
 	document.querySelectorAll('.todo').forEach((element, index) => {
 		element.addEventListener("click", () => {
-			document.querySelector('.todo-list-container').innerHTML = `
+			if (editClicked) {
+				editClicked = false;
+			} else {
+				document.querySelector('.todo-list-container').innerHTML = `
 			<h1 class="todo-list-text">${subjects[index].name}</h1>
-      <button class="add-new-button">+</button>
-      <div class="todo-list"></div>
+			<button class="add-new-button">+</button>
+			<div class="todo-list"></div>
 			`
 			generateHTML(subjects[index].todoList, index, subjects, subjects[index].name);
+			}
+			
 		})
 	})
 }
