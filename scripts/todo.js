@@ -4,8 +4,10 @@ import { generateSelectorHTML } from "./fileselector.js";
 
 
 
-
 export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
+    let nowClicked;
+    let nowClickedIndex;
+    let editClicked = false;
     let todoHTML = "";
     if (todoList.length === 0) {
         todoHTML = "Todolist is empty - Add new todos."
@@ -14,12 +16,18 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
     todoList.forEach((element, index) => {
         const elementName = element.name[0].toUpperCase() + element.name.slice(1);
         let elementInfo = element.info;
+        elementInfo = elementInfo.split("\n");
         if (!elementInfo) {
             elementInfo = 'No info available. Edit to add new.';
         }
+        let newElementInfo = "";
+        elementInfo.forEach(e => {
+            newElementInfo += `<p class="element-info">${e}</p>`;
+        })
+        const bottomMargin = 80 + (elementInfo.length - 1) * 20
 
         todoHTML += `
-        <div class="todo">
+        <div class="todo" data-margin-bottom="${bottomMargin}">
         <div class="todo-flex-container">
         <p class="todo-header">${elementName}</p>
         <div class="todo-line"></div>
@@ -28,7 +36,7 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
         </div>
         </div>
         <div class="todo-expand-section">
-        <div class="todo-info">${elementInfo}</div>
+        <div  class="todo-info">${newElementInfo}</div>
         </div>
         </div>
         `
@@ -36,27 +44,11 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
     document.querySelector('.todo-list').innerHTML = todoHTML;
     
     
-    document.querySelectorAll('.todo').forEach((element, index) => {
-        let elementName = document.querySelectorAll('.todo-header')[index].innerHTML;
-        let clickCount;
-        todoList.forEach((e) => {
-            if (e.name[0].toUpperCase() + e.name.slice(1) === elementName) {
-                clickCount = e.clickCount;
-            }
-        })
-        
-        element.addEventListener("click", () => {
-            if (clickCount % 2 === 0) {
-                element.classList.add('todo-expanded');
-            } else {
-                element.classList.remove('todo-expanded');
-            }
-            clickCount++;   
-        })
-    })
+    
     
     document.querySelectorAll('.todo-edit-button').forEach(element => {
         element.addEventListener("click", () => {
+            editClicked = true;
             document.querySelector('.todo-list-container').innerHTML = `
             <h1 class="todo-list-text">Edit text:</h1>
             <button class="delete-button">X</button>
@@ -66,15 +58,18 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
             <input class="header-input header-i-input" type="text" value="${element.dataset.imp}" required>
             <br>
             <p class="edit-header">Information: </p>
-            <textarea class="textarea" rows="18" cols="120" required>${element.dataset.info}</textarea>
+            <textarea onkeydown="" class="textarea" rows="18" cols="120" required>${element.dataset.info}</textarea>
             <button class="submit">Save and close</button>
             `;
             
+            
+
             document.querySelector('.submit').addEventListener("click", () => {
                 const name = document.querySelector('.header-input').value;
                 const info = document.querySelector('.textarea').value;
                 const imp = document.querySelector('.header-i-input').value;
                 
+
                 if (!name || !imp) {
                     alert('Name or importance shouldnt be left empty');
                     return 132322;
@@ -121,6 +116,49 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
             })
         })
     })
+
+
+    document.querySelectorAll('.todo').forEach((element, index) => {
+        
+        
+        element.addEventListener("click", () => {
+            let elementName = document.querySelectorAll('.todo-header')[index].innerHTML;
+            let clickCount;
+            let clickIndex;
+            todoList.forEach((e, i) => {
+                if (e.name[0].toUpperCase() + e.name.slice(1) === elementName) {
+                    clickCount = e.clickCount;
+                    clickIndex = i;
+                }
+            })
+            console.log(todoList)
+            if (!editClicked) {
+                if (nowClicked && nowClicked !== element) {
+                    nowClicked.classList.remove('todo-expanded');
+                    nowClicked.style.marginBottom = '0px'
+                    todoList[nowClickedIndex].clickCount++;
+                    console.log(todoList[nowClickedIndex])
+                    console.log('nowclicked')
+                }
+                if (clickCount % 2 === 0) {
+                    console.log('click')
+                    element.classList.add('todo-expanded');
+                    document.querySelector('.todo-expanded').style.marginBottom = `${element.dataset.marginBottom}px`;
+                    nowClicked = element;
+                    nowClickedIndex = clickIndex;
+                } else {
+                    console.log('else')
+                    element.classList.remove('todo-expanded');
+                    element.style.marginBottom = '0px';
+                    nowClicked = undefined;
+                }
+                console.log(clickCount)
+                todoList[nowClickedIndex].clickCount++;
+            } 
+        })
+    })
+
+
     document.querySelector('.add-new-button').addEventListener("click", () => {
         document.querySelector('.todo-list-container').innerHTML = `
         <h1 class="todo-list-text">Add new:</h1>
