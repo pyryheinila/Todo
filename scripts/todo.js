@@ -137,8 +137,6 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
                     nowClicked.classList.remove('todo-expanded');
                     nowClicked.style.marginBottom = '0px'
                     todoList[nowClickedIndex].clickCount++;
-                    console.log(todoList[nowClickedIndex])
-                    console.log('nowclicked')
                 }
                 if (clickCount % 2 === 0) {
                     console.log('click')
