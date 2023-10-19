@@ -125,7 +125,6 @@
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     overflow: visible;
-    margin-bottom: 80px;
 }
 
 .todo-expand-section {
@@ -137,6 +136,13 @@
     border-top: none;
     margin-left: -1.5px;
     padding: 20px 30px;
+}
+
+.element-info {
+    margin: 3px;
+}
+.element-info:first-of-type {
+    margin-top: -10px;
 }
 
 @media (max-width: 1000px) {
