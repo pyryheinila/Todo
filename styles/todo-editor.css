@@ -35,6 +35,7 @@
     margin-left: 10px;
     outline: none;
     overflow: hidden;
+    width: 100%;
 }
 
 .submit {
@@ -75,6 +76,7 @@
     }
 }
 
+
 @media (max-width: 828px) {
     .header-input:first-of-type {
         width: 40%;
@@ -82,6 +84,7 @@
     .header-input {
         font-size: 20px;
     }
+
 }
 
 @media (max-height: 680px) {
