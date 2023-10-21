@@ -1,8 +1,20 @@
 import {generateHTML} from "./todo.js";
 
-
-
+// localStorage.setItem('subjects', JSON.stringify([]))
 let subjects = JSON.parse(localStorage.getItem('subjects')) || []
+
+if (subjects) {
+	subjects.forEach(e => {
+		e.todoList.forEach(element => {
+			element.clickCount = 0;
+		})
+	})
+}
+
+
+
+
+
 
 generateSelectorHTML();
 export function generateSelectorHTML() {
