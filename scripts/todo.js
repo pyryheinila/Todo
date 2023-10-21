@@ -2,17 +2,21 @@ import { generateSelectorHTML } from "./fileselector.js";
 
 
 
+let nowClicked;
+let editClicked2 = false;
+let nowClickedIndex;
+let editClicked = false;
+
+
+
 
 
 export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
-    let nowClicked;
-    let nowClickedIndex;
-    let editClicked = false;
     let todoHTML = "";
     if (todoList.length === 0) {
         todoHTML = "Todolist is empty - Add new todos."
     }
-
+    
     todoList.forEach((element, index) => {
         const elementName = element.name[0].toUpperCase() + element.name.slice(1);
         let elementInfo = element.info;
@@ -25,7 +29,7 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
             newElementInfo += `<p class="element-info">${e}</p>`;
         })
         const bottomMargin = 80 + (elementInfo.length - 1) * 20
-
+        
         todoHTML += `
         <div class="todo" data-margin-bottom="${bottomMargin}">
         <div class="todo-flex-container">
@@ -49,6 +53,7 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
     document.querySelectorAll('.todo-edit-button').forEach(element => {
         element.addEventListener("click", () => {
             editClicked = true;
+
             document.querySelector('.todo-list-container').innerHTML = `
             <h1 class="todo-list-text">Edit text:</h1>
             <button class="delete-button">X</button>
@@ -63,13 +68,13 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
             `;
             
             
-
+            
             document.querySelector('.submit').addEventListener("click", () => {
                 const name = document.querySelector('.header-input').value;
                 const info = document.querySelector('.textarea').value;
                 const imp = document.querySelector('.header-i-input').value;
                 
-
+                
                 if (!name || !imp) {
                     alert('Name or importance shouldnt be left empty');
                     return 132322;
@@ -116,48 +121,67 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
             })
         })
     })
-
-
+    
+    
     document.querySelectorAll('.todo').forEach((element, index) => {
         
         
         element.addEventListener("click", () => {
-            let elementName = document.querySelectorAll('.todo-header')[index].innerHTML;
-            let clickCount;
-            let clickIndex;
-            todoList.forEach((e, i) => {
-                if (e.name[0].toUpperCase() + e.name.slice(1) === elementName) {
-                    clickCount = e.clickCount;
-                    clickIndex = i;
-                }
-            })
-            console.log(todoList)
+            
+            
             if (!editClicked) {
-                if (nowClicked && nowClicked !== element) {
-                    nowClicked.classList.remove('todo-expanded');
-                    nowClicked.style.marginBottom = '0px'
-                    todoList[nowClickedIndex].clickCount++;
-                }
-                if (clickCount % 2 === 0) {
-                    console.log('click')
+                let elementName = document.querySelectorAll('.todo-header')[index].innerHTML || undefined;
+                let clickCount;
+                let clickIndex;
+                todoList.forEach((e, i) => {
+                    if (e.name[0].toUpperCase() + e.name.slice(1) === elementName) {
+                        clickCount = e.clickCount;
+                        clickIndex = i;
+                    }
+                })
+                if (editClicked2) {
                     element.classList.add('todo-expanded');
                     document.querySelector('.todo-expanded').style.marginBottom = `${element.dataset.marginBottom}px`;
-                    nowClicked = element;
                     nowClickedIndex = clickIndex;
-                } else {
-                    console.log('else')
-                    element.classList.remove('todo-expanded');
-                    element.style.marginBottom = '0px';
-                    nowClicked = undefined;
+                    nowClicked = element;
+                    editClicked2 = false;
+                } else {    
+                    if (nowClicked && nowClicked !== element) {
+                        nowClicked.classList.remove('todo-expanded');
+                        nowClicked.style.marginBottom = '0px'
+                        todoList[nowClickedIndex].clickCount++;
+                    }
+                    if (clickCount % 2 === 0) {
+                        element.classList.add('todo-expanded');
+                        document.querySelector('.todo-expanded').style.marginBottom = `${element.dataset.marginBottom}px`;
+                        nowClicked = element;
+                        nowClickedIndex = clickIndex;
+                    } else {
+                        element.classList.remove('todo-expanded');
+                        element.style.marginBottom = '0px';
+                        nowClicked = undefined;
+                    }
                 }
-                console.log(clickCount)
                 todoList[nowClickedIndex].clickCount++;
-            } 
+            } else {
+                subjects.forEach(e => {
+                    e.todoList.forEach(element => {
+                        element.clickCount = 0;
+                    })
+                })
+                editClicked = false;
+                editClicked2 = true;
+            }
         })
     })
-
-
+    
+    
     document.querySelector('.add-new-button').addEventListener("click", () => {
+        subjects.forEach(e => {
+            e.todoList.forEach(element => {
+                element.clickCount = 0;
+            })
+        })
         document.querySelector('.todo-list-container').innerHTML = `
         <h1 class="todo-list-text">Add new:</h1>
         <button class="delete-button">X</button>
@@ -180,8 +204,8 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
                 alert('Name or importance shouldnt be left empty');
                 return 132322;
             }
-
-
+            
+            
             todoList.push({
                 name: name,
                 info: info,
@@ -206,14 +230,14 @@ export function generateHTML(todoList, subjectIndex, subjects, subjectName) {
             generateHTML(todoList, subjectIndex, subjects, subjectName);
         })
     })
-
+    
     document.querySelector('.header-name').addEventListener("click", () => {
         document.querySelector('.todo-list-container').innerHTML = `
         <h1 class="todo-list-text">Todo lists</h1>
-      <button class="add-new-button">+</button>
-      <div class="todo-list"></div>
+        <button class="add-new-button">+</button>
+        <div class="todo-list"></div>
         `
-
+        
         generateSelectorHTML();
     })
 }
