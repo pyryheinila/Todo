@@ -45,8 +45,14 @@
     margin-top: -20px;
 }
 
+.done-button img {
+    width: 30px;
+    height: 30px;
+}
+
 .add-new-button, 
-.delete-button {
+.delete-button,
+.done-button {
     height: 50px;
     width: 50px;
     border: 2px solid var(--color-light-green);
@@ -62,6 +68,21 @@
     position: relative;
     top: -45px;
     right: calc(-95% + 25px);
+    box-sizing: border-box;
+}
+
+.done-button {
+    position: static;
+    width: 43px;
+    height: 43px;
+    margin-top: -20px;
+    margin-bottom: -10px;
+    margin-right: -1px;
+    box-sizing: border-box;
+}
+
+.done-button:hover {
+    border: 2px solid var(--text-color);
 }
 
 .delete-button {
@@ -76,6 +97,13 @@
     opacity: 0.8;
     transition: 0.2s;
 }
+
+.add-new-button:active,
+.delete-button:active {
+    border: 2px solid var(--text-color);
+    transition: 0s;
+}
+
 
 .todo-header {
     font-size: 30px;
@@ -107,6 +135,10 @@
     transition: 0.2s;
 }
 
+.todo-edit-button:active {
+    box-shadow: inset 5px 5px 5px rgba(255, 255, 255, 0.5), inset -5px -5px 5px rgba(255, 255, 255, 0.5);
+}
+
 
 .todo:hover {
     cursor: pointer;
@@ -117,7 +149,6 @@
 .pencil-icon {
     width: 35px;
     height: 35px;
-    z-index: -1;
 }
 
 .todo-expanded {
@@ -129,7 +160,6 @@
 
 .todo-expand-section {
     width: calc(100% - 60px);
-    display: block;
     border: 2px solid var(--text-color);
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -138,11 +168,119 @@
     padding: 20px 30px;
 }
 
+.todo-expand-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.todo-links {
+    display: flex;
+    column-gap: 20px;
+    border: 2px solid white;
+    border-radius: 5px;
+    padding: 5px 30px;
+    justify-content: center;
+}
+
+.todo-links a {
+    color: blue;
+    margin: 0px 10px;
+}
+
+.header-spacing {
+    height: 50px;
+    display: block;
+}
+
+.go-back-arrow {
+    width: 45px;
+    cursor: pointer;
+    transform: rotate(90deg);
+    transition: 0.3s;
+}
+
+.go-back-arrow-container {
+    position: absolute;
+    left: 20%;
+    top: 110px;
+    z-index: 200;
+}
+
+.go-back-arrow:hover {
+    opacity: 0.7;
+}
+
+.go-back-arrow:active {
+    transform: rotate(-270deg);
+    transition: 0.5s ease-out;
+}
+
 .element-info {
     margin: 3px;
+    font-family: monospace;
+    font-size: 15px;
 }
+
+.todo-info {
+    flex: 1;
+}
+
 .element-info:first-of-type {
     margin-top: -10px;
+}
+
+
+.todo-list-container {
+    z-index: 20;
+    background-color: var(--background);
+}
+
+.username-input,
+.password-input {
+    display: inline-block;
+    background-color: transparent !important;
+    border: none;
+    color: var(--text-color);
+    font-size: 30px;
+    margin-left: 10px;
+    outline: none;
+    width: 40%;
+    margin-bottom: 20px;
+}
+
+
+
+.log-in-header {
+    margin-bottom: 30px;
+}
+
+.sign-up-text {
+    text-align: center;
+}
+
+
+
+.sign-up {
+    background-color: transparent;
+    color: white;
+    box-shadow: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.sign-up:active {
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: 0.1s;
+}
+
+.sign-up:hover {
+    text-decoration: underline;
+}
+
+.sign-up-cont {
+    display: flex;
+    justify-content: center;
 }
 
 @media (max-width: 1000px) {
@@ -150,3 +288,4 @@
         font-size: 20px;
     }
 }
+
