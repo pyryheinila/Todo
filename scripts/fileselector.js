@@ -1,40 +1,85 @@
-import {generateHTML} from "./todo.js";
+import {generateHTML, getSubjects, setSubjects} from "./todo.js";
+import {addSidebarOnclick} from "./add-sidebar-onclick.js";
 
 // localStorage.setItem('subjects', JSON.stringify([]))
-let subjects = JSON.parse(localStorage.getItem('subjects')) || []
-
-if (subjects) {
-	subjects.forEach(e => {
+export let completedTodos = getSubjects(true);
+if (completedTodos) {
+	completedTodos.forEach(e => {
 		e.todoList.forEach(element => {
 			element.clickCount = 0;
 		})
 	})
 }
 
+addSidebarOnclick();
 
 
-
-
-
-generateSelectorHTML();
-export function generateSelectorHTML() {
+export function generateSelectorHTML(subjects, completed) {
 	let editClicked = false;
 	let selectorHTML = '';
-	subjects.forEach(subject => {
-		const subjectName = subject.name[0].toUpperCase() + subject.name.slice(1);
-		selectorHTML += `
-		<div class="todo">
-		<div class="todo-flex-container">
-		<p class="todo-header">${subjectName}</p>
-		<div class="todo-line"></div>
-		<div class="todo-edit-button" data-name="${subjectName}">
-		<img src="./pencil.png" class="pencil-icon">
-		</div>
-		</div>
-		</div>
+	
+	if (completed) {
+		document.querySelector('.todo-list-container').innerHTML = `
+		<h1 class="todo-list-text" style="margin-bottom: 50px;	">Completed todos</h1>
+		<div class="todo-list"></div>
 		`
-	})
+		let completedTodos = getSubjects(true);
+		completedTodos.forEach((todo, index) => {
+			if (todo.todoList.length === 0) {
+				completedTodos.splice(index, 1)
+				setSubjects(subjects, true);
+			}
+		})
+		document.querySelector('.go-back-arrow-container').innerHTML = '<img class="go-back-arrow" alt="go-back-arrow" src="images/go-back-2.png">'
+		document.querySelector('.go-back-arrow').addEventListener('click', () => {
+			let ogSubjects = getSubjects(true);
+			generateSelectorHTML(ogSubjects, false);
+		})
+	} else {
+		document.querySelector('.todo-list-container').innerHTML = `
+		<h1 class="todo-list-text">Todo lists</h1>
+		<button class="add-new-button">+</button>
+		<div class="todo-list"></div>`
+		
+		document.querySelector('.go-back-arrow-container').innerHTML = '';
+	}
+	if (subjects.length === 0) {
+		if (completed) {
+			selectorHTML = 'You havent completed any todos';
+		} else {
+			'No todolists available. Add new.';
+		}
+	} else {
+		subjects.forEach(subject => {
+			const subjectName = subject.name[0].toUpperCase() + subject.name.slice(1);
+			let editButtonHTML = `<div class="todo-edit-button" data-name="${subjectName}"><img src="./pencil.png" class="pencil-icon"></div>`
+			if (completed) {
+				editButtonHTML = ''
+			}
+			selectorHTML += `
+			<div class="todo">
+			<div class="todo-flex-container">
+			<p class="todo-header">${subjectName}</p>
+			<div class="todo-line"></div>
+			${editButtonHTML}
+			</div>
+			</div>
+			`
+		})
+	}
+	
 	document.querySelector('.todo-list').innerHTML = selectorHTML;
+
+
+	document.querySelector('.header-name').addEventListener("click", () => {
+		document.querySelector('.todo-list-container').innerHTML = `
+		<h1 class="todo-list-text">Todo lists</h1>
+		<button class="add-new-button">+</button>
+		<div class="todo-list"></div>
+		`
+		let ogSubjects = getSubjects(true);
+		generateSelectorHTML(ogSubjects, false);
+	})
 
 
 	document.querySelectorAll('.todo-edit-button').forEach(element => {
@@ -49,7 +94,16 @@ export function generateSelectorHTML() {
 			<div class="empty-space"></div>
 			<button class="submit">Save and close</button>
 			`;
-			
+			document.querySelector('.go-back-arrow-container').innerHTML = '<img class="go-back-arrow" alt="go-back-arrow" src="images/go-back-2.png">'
+			document.querySelector('.go-back-arrow').addEventListener('click', () => {
+				document.querySelector('.todo-list-container').innerHTML = `
+				<h1 class="todo-list-text">Todo lists</h1>
+				<button class="add-new-button">+</button>
+				<div class="todo-list"></div>
+				`
+				generateSelectorHTML(subjects, false);
+			})
+				
 			document.querySelector('.submit').addEventListener("click", () => {
 				const name = document.querySelector('.header-input').value;
 				
@@ -69,12 +123,14 @@ export function generateSelectorHTML() {
 						elem.name = name;
 					}
 				})
-				localStorage.setItem('subjects', JSON.stringify(subjects));
+				setSubjects(subjects, false);
 				document.querySelector('.todo-list-container').innerHTML = `
 				<h1 class="todo-list-text">Todo lists</h1>
 				<button class="add-new-button">+</button>
-				<div class="todo-list"></div>`
-				generateSelectorHTML();
+				<div class="todo-list"></div>
+				
+				`
+				generateSelectorHTML(subjects, false);
 			})
 			document.querySelector('.delete-button').addEventListener("click", () => {
 				let deleteIndex;
@@ -84,18 +140,53 @@ export function generateSelectorHTML() {
 					}
 				})
 				subjects.splice(deleteIndex, 1);
-				localStorage.setItem('subjects', JSON.stringify(subjects))
+				setSubjects(subjects, false);
 				document.querySelector('.todo-list-container').innerHTML = `
 				<h1 class="todo-list-text">Todo lists</h1>
 				<button class="add-new-button">+</button>
-				<div class="todo-list"></div>`
-				generateSelectorHTML();
+				<div class="todo-list"></div>
+				`
+				generateSelectorHTML(subjects, false);
 			})
 		})
 	})
 
-	document.querySelector('.add-new-button').addEventListener("click", () => {
-		document.querySelector('.todo-list-container').innerHTML = `
+	if (!completed) {
+		document.querySelector('.add-new-button').addEventListener("click", () => {
+			addAddNewOnclick(subjects);
+		})
+	}
+
+
+	document.querySelectorAll('.todo').forEach((element, index) => {
+		element.addEventListener("click", () => {
+			if (editClicked) {
+				editClicked = false;
+			} else {
+				if (!completed) {
+					document.querySelector('.todo-list-container').innerHTML = `
+					<h1 class="todo-list-text">${subjects[index].name}</h1>
+					<button class="add-new-button">+</button>
+					<div class="todo-list"></div>
+					`
+				} else {
+					document.querySelector('.todo-list-container').innerHTML = `
+					<h1 class="todo-list-text">Completed: ${subjects[index].name}</h1>
+					<div class="header-spacing"></div>
+					<div class="todo-list"></div>
+					`
+				}
+				
+				generateHTML(subjects[index].todoList, index, subjects, subjects[index].name, completed, completedTodos);
+			}
+			
+		})
+	})
+
+}
+
+function addAddNewOnclick(subjects) {
+	document.querySelector('.todo-list-container').innerHTML = `
 		<h1 class="todo-list-text">Add new:</h1>
 		<button class="delete-button">X</button>
 		<p class="edit-header">Header: </p>
@@ -103,7 +194,15 @@ export function generateSelectorHTML() {
 		<div class="empty-space"></div>
 		<button class="submit">Save and close</button>
 		`;
-		
+		document.querySelector('.go-back-arrow-container').innerHTML = '<img class="go-back-arrow" alt="go-back-arrow" src="images/go-back-2.png">'
+		document.querySelector('.go-back-arrow').addEventListener('click', () => {
+			document.querySelector('.todo-list-container').innerHTML = `
+			<h1 class="todo-list-text">Todo lists</h1>
+			<button class="add-new-button">+</button>
+			<div class="todo-list"></div>
+			`
+			generateSelectorHTML(subjects, false);
+		})
 		document.querySelector('.submit').addEventListener("click", () => {
 			const name = document.querySelector('.header-input').value;
 			
@@ -112,42 +211,25 @@ export function generateSelectorHTML() {
 				return 132322;
 			}
 
-
 			subjects.push({
 				name: name,
 				todoList: []
 			});
 			
-			localStorage.setItem('subjects', JSON.stringify(subjects))
+			setSubjects(subjects, false);
 			document.querySelector('.todo-list-container').innerHTML = `
 			<h1 class="todo-list-text">Todo lists</h1>
 			<button class="add-new-button">+</button>
-			<div class="todo-list"></div>`
-			generateSelectorHTML()
+			<div class="todo-list"></div>
+			`
+			generateSelectorHTML(subjects, false)
 		})
 		document.querySelector('.delete-button').addEventListener("click", () => {
 			document.querySelector('.todo-list-container').innerHTML = `
 			<h1 class="todo-list-text">Todo lists</h1>
 			<button class="add-new-button">+</button>
-			<div class="todo-list"></div>`
-			generateSelectorHTML();
-		})
-	})
-
-
-	document.querySelectorAll('.todo').forEach((element, index) => {
-		element.addEventListener("click", () => {
-			if (editClicked) {
-				editClicked = false;
-			} else {
-				document.querySelector('.todo-list-container').innerHTML = `
-			<h1 class="todo-list-text">${subjects[index].name}</h1>
-			<button class="add-new-button">+</button>
 			<div class="todo-list"></div>
 			`
-			generateHTML(subjects[index].todoList, index, subjects, subjects[index].name);
-			}
-			
+			generateSelectorHTML(subjects, false);
 		})
-	})
 }
