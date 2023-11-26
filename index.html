@@ -11,17 +11,46 @@
 </head>
 <body>
   <header class="header">
-    <div class="header-name">TDL</div>
+    
+    <div class="header-name">Todolist</div>
+  
+    <div class="header-left-section">
+      <div class="sidebar-button">
+        <div class="sidebar-animation-line"></div>
+        <div class="sidebar-animation-line-2"></div>
+        <div class="sidebar-line"></div>
+        <div class="sidebar-line"></div>
+        <div class="sidebar-line"></div>
+      </div>
+    </div>
   </header>
   <main class="main">
+    <div class="go-back-arrow-container">
+    </div>
     <div class="todo-list-container">
-      <h1 class="todo-list-text">Todo lists</h1>
-      <button class="add-new-button">+</button>
-      <div class="todo-list"></div>
       
     </div>
+
+
+    <div class="link-popup-cont">
+      <div class="link-popup">
+        <div class="popup-top-row">
+          <p class="popup-header">Enter link:</p>
+          <div class="popup-top-spacing"></div>
+          <button class="popup-close-button">x</button>
+        </div>
+        <div class="popup-text">Link text:</div>
+        <input class="popup-input link-text-input">      
+        <div class="popup-text">Link href:</div>
+        <input class="popup-input link-href-input">
+        <button class="popup-submit">Ok</button> 
+      </div>
+    </div>
+    <div class="sidebar-cont"></div>
   </main>
-  <script type="module" src="scripts/fileselector.js"></script>
+  
+  <script type="module" src="scripts/open-file.js"></script>
   <script type="module" src="scripts/todo.js"></script>
+  <script type="module" src="scripts/fileselector.js"></script>
 </body>
 </html>
