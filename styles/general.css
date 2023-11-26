@@ -13,3 +13,10 @@ body {
     font-family: sans-serif;
     color: var(--text-color);
 }
+
+.margin-bottom {
+    height: 100px;
+    display: block;
+    bottom: 0px;
+}
+
