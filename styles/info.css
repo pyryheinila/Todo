@@ -1,0 +1,21 @@
+@import "general.css";
+.info-header {
+  text-align: center;
+}
+
+main {
+  width: 70%;
+  margin: 30px auto;
+}
+
+.header-link {
+  text-decoration: none;
+}
+
+.normal-text a {
+  color: var(--text-color);
+}
+
+.normal-text {
+  margin-left: 10px;
+}
